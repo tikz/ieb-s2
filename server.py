@@ -1,5 +1,4 @@
 import logging
-import os
 import sys
 
 from twisted.internet import protocol, reactor, task
@@ -24,7 +23,12 @@ class ClientSession:
 
 
 class ServerProtocol(protocol.Protocol):
+    def connectionMade(self):
+        self._peer = self.transport.getPeer()
+        logging.info(f"New connection from {self._peer}")
+
     def connectionLost(self, client):
+        logging.info(f"Closed connection from {self._peer}")
         self.factory.clientConnectionLost(self)
 
     def dataReceived(self, product_code: bytes):
@@ -64,7 +68,7 @@ class ServerFactory(protocol.Factory):
             STORAGE.delete(product_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: server.py <port> <base API URL>")
         sys.exit(1)

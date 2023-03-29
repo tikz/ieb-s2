@@ -18,7 +18,7 @@ class ProductStorage:
     def __init__(self, api_url):
         self._api_url = api_url
         self._products = {}
-        threading.Thread(target=self._run).start()
+        threading.Thread(target=self._run, daemon=True).start()
 
     def _run(self):
         while True:
@@ -28,9 +28,10 @@ class ProductStorage:
             time.sleep(1)
 
     def _fetch(self, product_code: str):
+        url = f"{self._api_url}/products/{product_code}"
+        logging.info(f"fetch product {url}")
         try:
-            raw = requests.get(
-                f'{self._api_url}/products/{product_code}').content
+            raw = requests.get(url).content
         except Exception as e:
             self._set_error(product_code, e)
         else:
