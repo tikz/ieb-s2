@@ -79,4 +79,5 @@ if __name__ == "__main__":
 
     factory = ServerFactory()
     reactor.listenTCP(port, factory)
+    logging.info("Started")
     reactor.run()
